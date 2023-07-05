@@ -33,6 +33,16 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
+#define check_with_errno(check_type, cond, msg)                             \
+  do {                                                                      \
+    int err = errno;                                                        \
+    check_type(cond, "%s; error='%s' (errno=%s)", msg, os::strerror(err),   \
+               os::errno_name(err));                                        \
+} while (false)
+
+#define assert_with_errno(cond, msg)    check_with_errno(assert, cond, msg)
+#define guarantee_with_errno(cond, msg) check_with_errno(guarantee, cond, msg)
+
 #ifndef NR_riscv_flush_icache
 #ifndef NR_arch_specific_syscall
 #define NR_arch_specific_syscall 244
